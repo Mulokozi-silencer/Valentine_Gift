@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💌 My Momo 💌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --pink:       #ff6eb4;
+      --hot:        #e8005a;
+      --soft:       #ffd6ec;
+      --lavender:   #d4b8ff;
+      --peach:      #ffb347;
+      --cream:      #fff5f9;
+      --white:      #ffffff;
+      --yes-from:   #ff4fa3;
+      --yes-to:     #ff85c8;
+      --no-from:    #b0b0b0;
+      --no-to:      #888;
+      --shadow-pk:  0 10px 40px rgba(255,110,180,.4);
+      --r:          32px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E💗%3C/text%3E%3C/svg%3E") 16 16, auto;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(145deg, #ffe4f3 0%, #fce7ff 45%, #e8d9ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ══════════════════════════════════════════
+       FLOATING HEART PARTICLES
+    ══════════════════════════════════════════ */
+    #hearts-bg {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+
+    .h-particle {
+      position: absolute;
+      bottom: -60px;
+      pointer-events: none;
+      user-select: none;
+      animation: floatUp linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatUp {
+      0%   { opacity: 0;   transform: translateY(0)      rotate(0deg)   scale(1); }
+      8%   { opacity: .85; }
+      85%  { opacity: .6; }
+      100% { opacity: 0;   transform: translateY(-108vh) rotate(340deg) scale(.4); }
+    }
+
+    /* ══════════════════════════════════════════
+       MAIN CARD
+    ══════════════════════════════════════════ */
+    .card {
+      position: relative; z-index: 10;
+      background: rgba(255,255,255,.75);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 2.5px solid rgba(255,255,255,.9);
+      border-radius: var(--r);
+      padding: 3rem 2.8rem 2.5rem;
+      max-width: 480px; width: 92%;
+      text-align: center;
+      box-shadow: var(--shadow-pk), inset 0 1px 0 rgba(255,255,255,.9);
+      animation: cardIn .7s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(.55) translateY(50px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0); }
+    }
+
+    /* Bear / mascot */
+    .bear {
+      font-size: 5rem;
+      display: block;
+      animation: bearBob 2.2s ease-in-out infinite;
+      margin-bottom: .4rem;
+      filter: drop-shadow(0 4px 12px rgba(255,110,180,.35));
+    }
+
+    @keyframes bearBob {
+      0%,100% { transform: translateY(0) rotate(-4deg); }
+      50%      { transform: translateY(-10px) rotate(4deg); }
+    }
+
+    /* Question headline */
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(1.6rem, 5.5vw, 2.4rem);
+      color: var(--hot);
+      letter-spacing: .5px;
+      line-height: 1.25;
+      margin-bottom: .35rem;
+      text-shadow: 0 3px 14px rgba(232,0,90,.25);
+      animation: titlePop .8s cubic-bezier(.34,1.56,.64,1) .15s both;
+    }
+
+    @keyframes titlePop {
+      from { opacity: 0; transform: scale(.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .sub {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #c06;
+      opacity: .7;
+      margin-bottom: 2rem;
+      animation: fadeUp .6s ease .3s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: .7; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════════
+       BUTTONS AREA
+    ══════════════════════════════════════════ */
+    .btn-area {
+      position: relative;
+      min-height: 130px;   /* enough room for No to dodge */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.4rem;
+    }
+
+    /* Shared button style */
+    .btn {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1.15rem;
+      padding: .75rem 2.2rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform .18s cubic-bezier(.34,1.56,.64,1),
+                  box-shadow .18s ease,
+                  font-size .35s cubic-bezier(.34,1.56,.64,1);
+      position: relative;
+    }
+
+    /* YES */
+    #btn-yes {
+      background: linear-gradient(135deg, var(--yes-from), var(--yes-to));
+      color: var(--white);
+      box-shadow: 0 6px 24px rgba(255,79,163,.45);
+      z-index: 2;
+      animation: fadeUp .6s ease .45s both;
+    }
+
+    #btn-yes:hover {
+      transform: scale(1.12) rotate(-2deg);
+      box-shadow: 0 10px 34px rgba(255,79,163,.6);
+    }
+    #btn-yes:active { transform: scale(.95); }
+
+    /* NO */
+    #btn-no {
+      background: linear-gradient(135deg, var(--no-from), var(--no-to));
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(0,0,0,.18);
+      z-index: 2;
+      animation: fadeUp .6s ease .55s both;
+    }
+
+    /* No button dodges — handled entirely in JS */
+    #btn-no.dodging {
+      position: fixed;   /* escape card bounds */
+      transition: left .12s ease, top .12s ease, transform .12s ease;
+    }
+
+    #btn-no:hover { transform: scale(1.05); }
+
+    /* ══════════════════════════════════════════
+       YES CONFIRMATION STAGES
+    ══════════════════════════════════════════ */
+    /* Pop overlay message */
+    .pop-msg {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .pop-msg.show { animation: popIn .55s cubic-bezier(.34,1.56,.64,1) forwards; }
+    .pop-msg.hide { animation: popOut .35s ease forwards; }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.4) rotate(-6deg); }
+      to   { opacity: 1; transform: scale(1)  rotate(0deg); }
+    }
+    @keyframes popOut {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0; transform: scale(1.4); }
+    }
+
+    .pop-inner {
+      background: linear-gradient(135deg, #ff4fa3, #d400a0);
+      color: var(--white);
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(1.6rem, 6vw, 2.8rem);
+      padding: 1.2rem 2.8rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(212,0,160,.5), 0 0 0 8px rgba(255,133,200,.3);
+      text-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+
+    /* ══════════════════════════════════════════
+       FINAL CELEBRATION SCREEN
+    ══════════════════════════════════════════ */
+    #final-screen {
+      display: none;
+      position: fixed; inset: 0; z-index: 300;
+      background: linear-gradient(145deg, #ffe4f3, #fce7ff, #e8d9ff);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    #final-screen.active { display: flex; animation: screenIn .6s ease both; }
+
+    @keyframes screenIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .final-bear {
+      font-size: 7rem;
+      animation: bigBounce 1.2s cubic-bezier(.34,1.56,.64,1) both,
+                 bearBob 2.2s ease-in-out infinite 1.2s;
+    }
+
+    @keyframes bigBounce {
+      from { opacity: 0; transform: scale(0) rotate(-20deg); }
+      to   { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    .final-title {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(2rem, 7vw, 3.2rem);
+      background: linear-gradient(135deg, var(--hot), var(--pink), var(--lavender));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 3px 10px rgba(255,110,180,.4));
+      animation: fadeUp .7s ease .4s both;
+    }
+
+    .final-sub {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--hot);
+      opacity: .85;
+      animation: fadeUp .7s ease .6s both;
+    }
+
+    .hearts-row {
+      font-size: 2rem;
+      letter-spacing: .5rem;
+      animation: fadeUp .7s ease .8s both;
+    }
+
+    /* ══════════════════════════════════════════
+       CLICK SPARKLES
+    ══════════════════════════════════════════ */
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 1.3rem;
+      animation: sparklePop 1s ease forwards;
+    }
+
+    @keyframes sparklePop {
+      0%   { opacity: 1; transform: scale(0) rotate(0deg)   translateY(0); }
+      50%  { opacity: 1; transform: scale(1.5) rotate(180deg) translateY(-24px); }
+      100% { opacity: 0; transform: scale(.4) rotate(360deg) translateY(-48px); }
+    }
+
+    /* ══════════════════════════════════════════
+       NO BUTTON PANIC TOOLTIP
+    ══════════════════════════════════════════ */
+    .no-taunt {
+      position: fixed;
+      background: #fff;
+      border: 2px solid var(--pink);
+      color: var(--hot);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: .85rem;
+      padding: .3rem .75rem;
+      border-radius: 20px;
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(255,110,180,.35);
+      animation: tauntIn .25s ease both;
+    }
+
+    @keyframes tauntIn {
+      from { opacity: 0; transform: scale(.6); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts layer -->
+  <div id="hearts-bg"></div>
+
+  <!-- Main card -->
+  <div class="card" id="main-card">
+    <span class="bear">🐻</span>
+    <h1>Monica!! Would you be my<br/>Valentine? 💌</h1>
+    <p class="sub">Choose wisely… 👀</p>
+
+    <div class="btn-area" id="btn-area">
+      <button class="btn" id="btn-yes" onclick="handleYes()">Yes 💖</button>
+      <button class="btn" id="btn-no"
+              onmouseenter="dodgeNo()"
+              ontouchstart="dodgeNo()">No 🙅</button>
+    </div>
+  </div>
+
+  <!-- Pop messages (injected/controlled by JS) -->
+  <div class="pop-msg" id="pop-msg">
+    <div class="pop-inner" id="pop-inner"></div>
+  </div>
+
+  <!-- Final screen -->
+  <div id="final-screen">
+    <span class="final-bear">🐻💕</span>
+    <h2 class="final-title">Knew you would accept!</h2>
+    <p class="final-sub">You just made me the happiest 🤭 Man! 🎉</p>
+    <div class="hearts-row">💕💖💗💓💞🩷💝</div>
+  </div>
+
+  <script>
+    /* ══════════════════════════════════════════
+       FLOATING HEARTS
+    ══════════════════════════════════════════ */
+    const heartsBg  = document.getElementById('hearts-bg');
+    const heartList = ['💕','💖','💗','💓','💞','🩷','❤️','💝','🌸','✨'];
+
+    function spawnHeart() {
+      const el  = document.createElement('span');
+      el.className = 'h-particle';
+      el.textContent = heartList[Math.floor(Math.random() * heartList.length)];
+      const x   = Math.random() * 100;
+      const sz  = .8 + Math.random() * 1.3;
+      const dur = 6  + Math.random() * 8;
+      const del = Math.random() * 4;
+      el.style.cssText = `left:${x}%;font-size:${sz}rem;animation-duration:${dur}s;animation-delay:${del}s;`;
+      heartsBg.appendChild(el);
+      el.addEventListener('animationend', () => el.remove(), { once: true });
+    }
+    for (let i = 0; i < 18; i++) spawnHeart();
+    setInterval(spawnHeart, 450);
+
+    /* ══════════════════════════════════════════
+       CLICK SPARKLES
+    ══════════════════════════════════════════ */
+    const sparkList = ['✨','⭐','💫','🌟','💥','🎀','🌸'];
+    document.addEventListener('click', e => {
+      for (let i = 0; i < 4; i++) {
+        const el = document.createElement('span');
+        el.className = 'sparkle';
+        el.textContent = sparkList[Math.floor(Math.random() * sparkList.length)];
+        const ox = (Math.random() - .5) * 70;
+        const oy = (Math.random() - .5) * 70;
+        el.style.cssText = `left:${e.clientX + ox}px;top:${e.clientY + oy}px;animation-delay:${i*.07}s;font-size:${1+Math.random()*.7}rem;`;
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove(), { once: true });
+      }
+    });
+
+    /* ══════════════════════════════════════════
+       NO BUTTON — DODGE LOGIC
+    ══════════════════════════════════════════ */
+    const btnNo       = document.getElementById('btn-no');
+    const taunts      = [
+      "Nuh-uh! 😤", "Catch me if you can! 🏃",
+      "Nice try! 😏", "Keep dreaming! 😂",
+      "You can't click me! 🙈", "Too slow! 💨",
+      "Hehehe~ 🤭", "Not today! 😅",
+      "NOPE. 🫣", "I'm slippery! 🧈"
+    ];
+    let noInitialized = false;
+    let tauntEl       = null;
+    let tauntTimer    = null;
+
+    function dodgeNo() {
+      const margin = 30;
+      const bw = btnNo.offsetWidth;
+      const bh = btnNo.offsetHeight;
+
+      if (!noInitialized) {
+        // First dodge: detach from flow, anchor to current position
+        const r = btnNo.getBoundingClientRect();
+        btnNo.classList.add('dodging');
+        btnNo.style.left   = r.left + 'px';
+        btnNo.style.top    = r.top  + 'px';
+        btnNo.style.width  = bw     + 'px';
+        btnNo.style.height = bh     + 'px';
+        noInitialized = true;
+      }
+
+      // Random new position anywhere on screen (with margin)
+      const newX = margin + Math.random() * (window.innerWidth  - bw - margin * 2);
+      const newY = margin + Math.random() * (window.innerHeight - bh - margin * 2);
+
+      btnNo.style.left = newX + 'px';
+      btnNo.style.top  = newY + 'px';
+      btnNo.style.transform = `rotate(${(Math.random()-0.5)*20}deg)`;
+
+      // Show taunting tooltip near button
+      showTaunt(newX + bw / 2, newY - 38);
+    }
+
+    function showTaunt(x, y) {
+      if (tauntEl) tauntEl.remove();
+      clearTimeout(tauntTimer);
+
+      tauntEl = document.createElement('span');
+      tauntEl.className = 'no-taunt';
+      tauntEl.textContent = taunts[Math.floor(Math.random() * taunts.length)];
+      tauntEl.style.cssText = `left:${x}px;top:${y}px;transform:translateX(-50%);`;
+      document.body.appendChild(tauntEl);
+
+      tauntTimer = setTimeout(() => {
+        if (tauntEl) { tauntEl.remove(); tauntEl = null; }
+      }, 1200);
+    }
+
+    /* ══════════════════════════════════════════
+       YES BUTTON — STAGES
+    ══════════════════════════════════════════ */
+    const btnYes  = document.getElementById('btn-yes');
+    const popMsg  = document.getElementById('pop-msg');
+    const popInner= document.getElementById('pop-inner');
+
+    const stages = [
+      { text: "Are you sure? 🥺",   emoji: "🥹", yesLabel: "Yes!! 💕"    },
+      { text: "Really Monny?? 😍",         emoji: "😳", yesLabel: "YES!! 💖💖"  },
+      { text: "Pinky promise? 🤙",   emoji: "🩷", yesLabel: "I PROMISE!! 💞" },
+    ];
+    let stage = 0;
+
+    function handleYes() {
+      if (stage < stages.length) {
+        showPop(stages[stage].text);
+        // Grow YES button
+        const newSize = 1.15 + (stage + 1) * 0.55;
+        btnYes.style.fontSize = newSize + 'rem';
+        btnYes.style.padding  = `${.75 + stage * .2}rem ${2.2 + stage * .5}rem`;
+        btnYes.style.boxShadow= `0 ${8+stage*4}px ${30+stage*12}px rgba(255,79,163,${.5+stage*.12})`;
+        btnYes.textContent = stages[stage].yesLabel;
+        stage++;
+      } else {
+        showFinal();
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       POP MESSAGE
+    ══════════════════════════════════════════ */
+    let popTimeout = null;
+
+    function showPop(text) {
+      clearTimeout(popTimeout);
+      popInner.textContent = text;
+      popMsg.className = 'pop-msg show';
+
+      popTimeout = setTimeout(() => {
+        popMsg.classList.replace('show', 'hide');
+        setTimeout(() => { popMsg.className = 'pop-msg'; }, 380);
+      }, 1600);
+    }
+
+    /* ══════════════════════════════════════════
+       FINAL CELEBRATION
+    ══════════════════════════════════════════ */
+    function showFinal() {
+      // Hide card & No button
+      document.getElementById('main-card').style.display = 'none';
+      if (btnNo) btnNo.style.display = 'none';
+      popMsg.className = 'pop-msg';
+
+      const finalScreen = document.getElementById('final-screen');
+      finalScreen.classList.add('active');
+
+      // Mega confetti
+      const colors = ['#ff6eb4','#ffc2e2','#c9b1ff','#ffb347','#ff4d6d','#fff'];
+
+      confetti({ particleCount: 180, spread: 100, origin: { y: .55 }, colors, shapes: ['circle','square'], scalar: 1.2 });
+
+      setTimeout(() => confetti({ particleCount: 90, angle: 60,  spread: 80, origin: { x: 0, y: .7 }, colors }), 300);
+      setTimeout(() => confetti({ particleCount: 90, angle: 120, spread: 80, origin: { x: 1, y: .7 }, colors }), 450);
+      setTimeout(() => confetti({ particleCount: 70, spread: 140, startVelocity: 18, gravity: .45, origin: { y: .08 }, shapes: ['star'], colors }), 700);
+      setTimeout(() => confetti({ particleCount: 180, spread: 100, origin: { y: .55 }, colors, shapes: ['circle','square'], scalar: 1.2 }), 2200);
+    }
+  </script>
+</body>
+</html>
